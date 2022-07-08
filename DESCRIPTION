@@ -1,0 +1,27 @@
+Type: Package
+Package: xadmix
+Title: Subsetting and Plotting Optimized for Admixture Data
+Version: 1.0.0
+Authors@R: 
+    person("Lukas", "Schönmann", , "lukas.schoenmann@outlook.com", role = c("aut", "cre"),
+           comment = c(ORCID = "0000-0002-3161-4270"))
+Description: A few functions which provide a quick way of subsetting
+    genomic admixture data and generating customizable stacked barplots.
+License: GPL (>= 3)
+URL: https://github.com/SpaceCowboy-71/xadmix
+BugReports: https://github.com/SpaceCowboy-71/xadmix/issues
+Depends: R (>= 2.10)
+Imports: dplyr, forcats, ggplot2, magrittr, methods, rlang, stringr,
+        tidyr, viridis
+Suggests: knitr, rmarkdown
+VignetteBuilder: knitr
+Encoding: UTF-8
+Language: en-US
+LazyData: true
+RoxygenNote: 7.2.0
+NeedsCompilation: no
+Packaged: 2022-07-07 15:08:33 UTC; Austin
+Author: Lukas Schönmann [aut, cre] (<https://orcid.org/0000-0002-3161-4270>)
+Maintainer: Lukas Schönmann <lukas.schoenmann@outlook.com>
+Repository: CRAN
+Date/Publication: 2022-07-08 15:20:02 UTC

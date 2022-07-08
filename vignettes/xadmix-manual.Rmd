@@ -1,0 +1,193 @@
+---
+title: "Manual - `xadmix`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Manual - `xadmix`}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.retina = 2,
+  fig.width = 480/72, 
+  fig.asp = 0.7, 
+  dev.args = list(type = "cairo-png")
+)
+```
+
+First, let's load the package. If you haven't installed it yet, you can do so with the `install.packages("xadmix")` command to get the latest stable release from *CRAN*. Alternatively, you can install the latest development release from GitHub: `devtools::install_github("SpaceCowboy-71/xadmix")`. This, however, requires the package `devtools`.  
+
+```{r setup}
+library(xadmix)
+```
+
+## Simulated Dataset
+
+The `xadmix` package provides a dummy dataset ("*xadmixture*") containing simulated genetic admixture data. Each observation has an accession identifier, the country where the plant material was collected, an entry for the species and five admixture coefficients, *K*. The values of these ancestries sum up to 1. 
+
+```{r}
+data("xadmixture")
+str(xadmixture)
+
+# number of observations per country
+table(xadmixture$country)
+
+# number of observations per species
+table(xadmixture$species)
+```
+
+## Subsetting
+
+`xadmix` comes with an optimized data subsetting function, `admix_subset()`. It enables filtering of the data for ancestry (*K*) percentages greater or less than a certain value. Additionally, any number of columns can be filtered for values supplied in a vector. By default, it also prints the progress after each subsetting step. 
+
+Multiple ancestries along with their percentages can be passed as argument vectors. Subsetting is then done pairwise, filtering the first ancestry by the first pecentage, then the second ones and so on. Some examples: 
+
+```{r}
+# keep only observations with K1 > 0.15 and K2 > 0.01
+subset1 <- admix_subset(xadmixture, 
+                        anc = c("K1", "K2"), 
+                        pct = c(0.15, 0.01))
+
+# keep only observations with K2 < 0.1 and K3 < 0.1
+subset2 <- admix_subset(xadmixture, 
+                        anc = c("K2", "K3"), 
+                        pct = c(0.1, 0.1), 
+                        comparison = "less")
+
+# filtering for countries and species
+subset3 <- admix_subset(xadmixture, 
+                        country = c("GBR", "FRA"), 
+                        species = c("lorem", "dolor"))
+```
+
+Subsets can be chained using the pipe operator (`%>%`) from package `magrittr`. This way, filtering for percentages greater and less than certain values is possible.  
+By setting the argument `quiet` to `TRUE`, no subset progress will be printed. 
+
+```{r}
+library(magrittr)
+# keep only observations with K1 > 0.1 and K4 < 0.3,
+# without printing subset progress
+subset4 <- admix_subset(xadmixture, 
+                        anc = "K1", 
+                        pct = 0.1, 
+                        quiet = TRUE) %>% 
+admix_subset(anc = "K1", 
+             pct = 0.3, 
+             comparison = "less", 
+             quiet = TRUE)
+
+# print number of observations for comparison
+nrow(xadmixture)
+nrow(subset4)
+```
+
+## Admixture Plots
+
+`xadmix` also comes with a user-friendly function for generating pretty stacked barplots, optimized to use with admixture data. 
+
+If the dataset were to contain only the accession numbers in the first column and ancestry percentages in subsequent columns, the function could be used without any further arguments. 
+
+However, the `xadmixture` dataset contains additional columns. Therefore, the columns for all *K*`s have to be selected by passing an argument. An example plotting the whole dataset:  
+
+```{r}
+# ancestries (K) are in the fourth to last column,
+# and plotted without showing bar labels
+admix_barplot(xadmixture,
+   K = 4:ncol(xadmixture),
+   names = FALSE
+)
+```
+
+### Grouped Stacked Barplots & Customized Appearance
+
+More information can be gained by looking at the subsets generated above: 
+
+```{r}
+# grouping data by column "country",
+# and sorting each group by ancestry column "K1"
+admix_barplot(subset1,
+   K = 4:ncol(xadmixture),
+   grouping = "country",
+   sortkey = "K1"
+)
+
+# changing color palette to "turbo" from package 'viridis',
+admix_barplot(subset2,
+   K = 4:ncol(xadmixture),
+   palette = "turbo",
+   grouping = "species",
+   sortkey = "K4"
+)
+```
+
+```{r}
+# removing title and changing axis labels text
+admix_barplot(subset3,
+   K = 4:ncol(xadmixture),
+   main = "",
+   xlab = "Accessions",
+   ylab = "Ancestry [%]", 
+   palette = "alternating",
+   sortkey = "K1",
+   names = FALSE
+)
+```
+
+### Noclip Feature
+
+Sometimes the group labels can get cut off. When there are not enough observations in the group,  the width of the grouped bars can be smaller than the width of the group label. `ggplot2` does not yet offer a flag to avoid this problem. In `xadmix`, however, there is an option to remove clipping altogether: 
+
+```{r}
+# directly output grouped plot with clipping removed from elements
+# (useful if there are groups with a low number of observations)
+subset5 <- admix_subset(xadmixture,
+                        anc = c("K3", "K4"), 
+                        pct = c(0.3, 0.2), 
+                        quiet = TRUE)
+
+```
+
+```{r}
+# noclip set to "TRUE"
+admix_barplot(subset5, 
+            K = 4:ncol(xadmixture),          
+            sortkey = "K5",
+            grouping = "country", 
+            palette = "viridis", 
+            names = FALSE, 
+            main = "Noclip on",
+            noclip = TRUE)
+# noclip set to "FALSE"
+admix_barplot(subset5, 
+            K = 4:ncol(xadmixture),          
+            sortkey = "K5",
+            grouping = "country", 
+            palette = "viridis", 
+            names = FALSE, 
+            main = "Noclip off",
+            noclip = FALSE)
+```
+<br />
+<br />
+<p style="text-align: center; font-size:16pt">♦</p>
+<br />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

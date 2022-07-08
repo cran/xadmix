@@ -1,0 +1,15 @@
+7a58731742f26433ecb250bbdbcf686d *DESCRIPTION
+ffeb39f92975b745e79e33aa7a81f615 *NAMESPACE
+97ab5b9104d2c3f158cd913e018cc8cb *NEWS.md
+faf47862a86b563c9472126fa979c3d8 *R/data.R
+10d113bf3fe2dff4d484eb2dbf197b97 *R/plots.R
+0fcf985ce9d5d46f55174e21cc3066bb *R/tools.R
+68ea39534db86c5f7e3e7e36ba1764b6 *build/vignette.rds
+788bc11486db1ced2a667281d7965c82 *data/xadmixture.rda
+62215cfcb2e21e407ff102d9756045f5 *inst/doc/xadmix-manual.R
+69e8436e295a0f5601ea8ed3dd3ee9a0 *inst/doc/xadmix-manual.Rmd
+94c1222c4ce9edc72ca4785bc4bdfd20 *inst/doc/xadmix-manual.html
+9177d0ff7aace512e3f737fcf6947b59 *man/admix_barplot.Rd
+23f521826920fafd375dff1553092c3a *man/admix_subset.Rd
+b7f29b4bca1f3dc7c1bc953d2348ad54 *man/xadmixture.Rd
+69e8436e295a0f5601ea8ed3dd3ee9a0 *vignettes/xadmix-manual.Rmd
